@@ -43,4 +43,10 @@ public class TarefaController {
     public void deletar(@PathVariable Long id) {
         repository.deleteById(id);
     }
+
+    @GetMapping("/{id}")
+    public Tarefa buscarPorId(@PathVariable Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+    }
 }
