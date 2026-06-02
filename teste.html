@@ -2,43 +2,264 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Kanban</title>
+        <title>Kanban - Edição Direta</title>
         <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', sans-serif; }
-            body { min-height: 100vh; background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 30%, #4fc3f7 70%, #29b6f6 100%); background-attachment: fixed; padding: 2rem; position: relative; }
-            body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 20% 30%, rgba(255,255,240,0.2) 0%, rgba(200,240,255,0.1) 100%); backdrop-filter: blur(2px); pointer-events: none; z-index: 0; }
-            .kanban-container { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; }
-            h1 { text-align: center; font-weight: 500; font-size: 2.4rem; background: linear-gradient(135deg, #ffffff, #e0f7fa); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-            .form-card { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(12px); border-radius: 28px; padding: 1.8rem; margin: 0 auto 2rem auto; max-width: 550px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.5); }
-            .form-card input, .form-card textarea, .form-card select, .form-card button { width: 100%; margin-bottom: 14px; padding: 12px 16px; border: none; border-radius: 20px; font-size: 1rem; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(4px); color: #01579b; font-weight: 500; outline: none; }
-            .form-card button { background: linear-gradient(135deg, #00b4d8, #0077b6); color: white; font-weight: bold; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 2, 0.64, 1); }
-            .form-card button:hover { transform: scale(1.02); }
-            .kanban-board { display: flex; gap: 1.8rem; justify-content: center; flex-wrap: wrap; }
-            .column { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(16px); border-radius: 32px; width: 340px; padding: 16px 12px; min-height: 550px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.45); transition: all 0.25s ease; }
-            .column h2 { text-align: center; font-size: 1.4rem; margin-bottom: 18px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .tasks-container { min-height: 450px; }
-            .card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border-radius: 24px; padding: 14px; margin-bottom: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1); border: 1px solid rgba(255,255,255,0.6); animation: cardPop 0.3s ease-out; }
-            @keyframes cardPop { 0% { opacity: 0; transform: scale(0.95) translateY(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-            .card:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-2px) scale(1.01); }
-            .card h4 { font-size: 1.1rem; color: #01579b; margin-bottom: 6px; }
-            .card p { font-size: 0.85rem; color: #2c3e50; margin-bottom: 10px; }
-            .card select { width: 100%; padding: 6px 10px; margin: 8px 0; border-radius: 40px; border: none; background: rgba(255,255,240,0.9); cursor: pointer; }
-            .card-actions { display: flex; gap: 8px; margin-top: 6px; }
-            .card-actions button { flex: 1; padding: 6px; border-radius: 40px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.1); color: #01579b; }
-            .card-actions button.edit-btn { background: rgba(0,150,136,0.8); color: white; }
-            .card-actions button.delete-btn { background: rgba(220,53,69,0.85); color: white; }
-            .card-actions button:hover { transform: scale(1.02); filter: brightness(1.05); }
-            .status-msg { text-align: center; margin: 20px auto; background: rgba(0,0,0,0.3); backdrop-filter: blur(12px); width: fit-content; padding: 8px 20px; border-radius: 50px; color: white; font-weight: 500; }
-            .popup-bounce { animation: popupBounce 0.3s cubic-bezier(0.22, 0.9, 0.3, 1) forwards; }
-            @keyframes popupBounce { 0% { transform: scale(0.92); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+            /* RESET e base leve */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: system-ui, 'Segoe UI', sans-serif;
+            }
+
+            body {
+                background: #e1f5fe;  /* fundo sólido claro, sem gradiente */
+                padding: 2rem;
+                min-height: 100vh;
+            }
+
+            .kanban-container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 2.2rem;
+                font-weight: 500;
+                color: #0277bd;
+                margin-bottom: 2rem;
+            }
+
+            /* Formulário - sem blur, sem gradiente */
+            .form-card {
+                background: white;
+                border-radius: 20px;
+                padding: 1.5rem;
+                margin: 0 auto 2rem auto;
+                max-width: 550px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                border: 1px solid #cfe9ff;
+            }
+
+            .form-card input,
+            .form-card textarea,
+            .form-card select,
+            .form-card button {
+                width: 100%;
+                margin-bottom: 12px;
+                padding: 10px 14px;
+                border: 1px solid #b0d4ff;
+                border-radius: 16px;
+                font-size: 1rem;
+                background: #ffffff;
+                color: #01579b;
+                outline: none;
+                transition: 0.2s;
+            }
+
+            .form-card input:focus,
+            .form-card textarea:focus,
+            .form-card select:focus {
+                border-color: #0288d1;
+                box-shadow: 0 0 0 2px rgba(2,136,209,0.2);
+            }
+
+            .form-card button {
+                background: #0288d1;
+                color: white;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+            }
+
+            .form-card button:hover {
+                background: #01579b;
+                transform: scale(0.98);
+            }
+
+            /* Board - colunas */
+            .kanban-board {
+                display: flex;
+                gap: 1.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .column {
+                background: #ffffffcc;
+                backdrop-filter: none; /* removido blur pesado */
+                background: #f0f9ff;
+                border-radius: 24px;
+                width: 340px;
+                padding: 16px 12px;
+                min-height: 500px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                border: 1px solid #cae5f5;
+            }
+
+            .column h2 {
+                text-align: center;
+                font-size: 1.3rem;
+                margin-bottom: 18px;
+                color: #0277bd;
+                font-weight: 500;
+            }
+
+            .tasks-container {
+                min-height: 420px;
+            }
+
+            /* Cards - sem backdrop blur */
+            .card {
+                background: white;
+                border-radius: 20px;
+                padding: 14px;
+                margin-bottom: 14px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                transition: all 0.2s ease;
+                border: 1px solid #d9edf7;
+                animation: cardPop 0.25s ease-out;
+            }
+
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+                background: #ffffff;
+            }
+
+            .card h4 {
+                font-size: 1.1rem;
+                color: #01579b;
+                margin-bottom: 6px;
+            }
+
+            .card p {
+                font-size: 0.85rem;
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+
+            .card select {
+                width: 100%;
+                padding: 6px 10px;
+                margin: 8px 0;
+                border-radius: 30px;
+                border: 1px solid #b0d4ff;
+                background: white;
+                cursor: pointer;
+            }
+
+            .card-actions {
+                display: flex;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .card-actions button {
+                flex: 1;
+                padding: 6px;
+                border-radius: 30px;
+                border: none;
+                font-weight: 500;
+                cursor: pointer;
+                transition: 0.15s;
+                background: #e1f5fe;
+                color: #01579b;
+            }
+
+            .card-actions button.edit-btn {
+                background: #b9f6ca;
+                color: #1b5e20;
+            }
+
+            .card-actions button.delete-btn {
+                background: #ffcdd2;
+                color: #b71c1c;
+            }
+
+            .card-actions button.save-edit-btn {
+                background: #a5d6a7;
+                color: #1b5e20;
+            }
+
+            .card-actions button.cancel-edit-btn {
+                background: #ffccbc;
+                color: #bf360c;
+            }
+
+            .card-actions button:hover {
+                filter: brightness(0.94);
+                transform: scale(0.97);
+            }
+
+            /* Modo edição - campos dentro do card */
+            .edit-mode-input,
+            .edit-mode-textarea {
+                width: 100%;
+                margin-bottom: 8px;
+                padding: 8px 12px;
+                border-radius: 16px;
+                border: 1px solid #81d4fa;
+                background: white;
+                font-size: 0.9rem;
+            }
+
+            .edit-mode-select {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 8px;
+                border-radius: 30px;
+                border: 1px solid #81d4fa;
+            }
+
+            /* Mensagem flutuante */
+            .status-msg {
+                text-align: center;
+                margin: 20px auto;
+                background: #e1f5fe;
+                width: fit-content;
+                padding: 8px 20px;
+                border-radius: 50px;
+                color: #01579b;
+                font-weight: 500;
+                border: 1px solid #b3e5fc;
+            }
+
+            /* Animações mantidas */
+            @keyframes cardPop {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.95) translateY(8px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+
+            .popup-bounce {
+                animation: popupBounce 0.3s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
+            }
+
+            @keyframes popupBounce {
+                0% {
+                    transform: scale(0.92);
+                    opacity: 0;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
         </style>
     </head>
     <body>
         <div class="kanban-container">
-            <h1>✨ Kanban ✨</h1>
+            <h1>📋 Kanban</h1>
             <div class="form-card">
-                <input type="text" id="titulo" placeholder="📌 Título da tarefa" autocomplete="off">
-                <textarea id="descricao" placeholder="📝 Descrição (opcional)"></textarea>
+                <input type="text" id="titulo" placeholder="Título da tarefa" autocomplete="off">
+                <textarea id="descricao" placeholder="Descrição (opcional)"></textarea>
                 <select id="status">
                     <option value="A_FAZER">🌊 A Fazer</option>
                     <option value="EM_ANDAMENTO">🌀 Em Andamento</option>
@@ -54,154 +275,204 @@
             <div class="status-msg" id="statusMsg"></div>
         </div>
 
-            <script>
-                const API_URL = "http://localhost:8080/api/tarefas";
-                const colunasMap = {
-                    "A_FAZER": document.getElementById("coluna-a-fazer"),
-                    "EM_ANDAMENTO": document.getElementById("coluna-em-andamento"),
-                    "CONCLUIDO": document.getElementById("coluna-concluido")
+        <script>
+            const API_URL = "http://localhost:8080/api/tarefas";
+            const colunasMap = {
+                "A_FAZER": document.getElementById("coluna-a-fazer"),
+                "EM_ANDAMENTO": document.getElementById("coluna-em-andamento"),
+                "CONCLUIDO": document.getElementById("coluna-concluido")
+            };
+
+            function mostrarMensagem(texto, isErro = false) {
+                const msgDiv = document.getElementById("statusMsg");
+                msgDiv.textContent = texto;
+                msgDiv.style.background = isErro ? "#ffebee" : "#e0f7fa";
+                msgDiv.style.color = isErro ? "#c62828" : "#01579b";
+                msgDiv.classList.add("popup-bounce");
+                setTimeout(() => msgDiv.classList.remove("popup-bounce"), 400);
+                setTimeout(() => { if (msgDiv.textContent === texto) msgDiv.textContent = ""; }, 3000);
+            }
+
+            async function carregarTarefas() {
+                mostrarMensagem("Carregando...");
+                try {
+                    const res = await fetch(API_URL);
+                    if (!res.ok) throw new Error(`Erro ${res.status}`);
+                    const tarefas = await res.json();
+                    for (let col in colunasMap) colunasMap[col].innerHTML = '';
+                    tarefas.forEach(tarefa => adicionarCardNaColuna(tarefa));
+                    mostrarMensagem(`${tarefas.length} tarefa(s) carregada(s).`);
+                } catch (err) {
+                    console.error(err);
+                    mostrarMensagem("Erro ao conectar com o servidor.", true);
+                }
+            }
+
+            function adicionarCardNaColuna(tarefa) {
+                const container = colunasMap[tarefa.status];
+                if (!container) return;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-id', tarefa.id);
+                renderizarCardNormal(card, tarefa);
+                container.appendChild(card);
+                card.classList.add("popup-bounce");
+                setTimeout(() => card.classList.remove("popup-bounce"), 300);
+            }
+
+            function renderizarCardNormal(card, tarefa) {
+                card.innerHTML = `
+                    <h4>${escapeHtml(tarefa.titulo)}</h4>
+                    <p>${escapeHtml(tarefa.descricao || '')}</p>
+                    <select onchange="mudarStatus(${tarefa.id}, this.value)">
+                        <option value="A_FAZER" ${tarefa.status === 'A_FAZER' ? 'selected' : ''}>🌊 A Fazer</option>
+                        <option value="EM_ANDAMENTO" ${tarefa.status === 'EM_ANDAMENTO' ? 'selected' : ''}>🌀 Em Andamento</option>
+                        <option value="CONCLUIDO" ${tarefa.status === 'CONCLUIDO' ? 'selected' : ''}>✅ Concluído</option>
+                    </select>
+                    <div class="card-actions">
+                        <button class="edit-btn" onclick="iniciarEdicao(this.parentElement.parentElement, ${tarefa.id})">✏️ Editar</button>
+                        <button class="delete-btn" onclick="deletarTarefa(${tarefa.id})">🗑 Excluir</button>
+                    </div>
+                `;
+            }
+
+            function renderizarCardEditavel(card, tarefa) {
+                card.innerHTML = `
+                    <input type="text" id="edit-titulo-${tarefa.id}" class="edit-mode-input" value="${escapeHtml(tarefa.titulo)}">
+                    <textarea id="edit-descricao-${tarefa.id}" class="edit-mode-textarea" placeholder="Descrição">${escapeHtml(tarefa.descricao || '')}</textarea>
+                    <select id="edit-status-${tarefa.id}" class="edit-mode-select">
+                        <option value="A_FAZER" ${tarefa.status === 'A_FAZER' ? 'selected' : ''}>🌊 A Fazer</option>
+                        <option value="EM_ANDAMENTO" ${tarefa.status === 'EM_ANDAMENTO' ? 'selected' : ''}>🌀 Em Andamento</option>
+                        <option value="CONCLUIDO" ${tarefa.status === 'CONCLUIDO' ? 'selected' : ''}>✅ Concluído</option>
+                    </select>
+                    <div class="card-actions">
+                        <button class="save-edit-btn" onclick="salvarEdicao(this.parentElement.parentElement, ${tarefa.id})">💾 Salvar</button>
+                        <button class="cancel-edit-btn" onclick="cancelarEdicao(this.parentElement.parentElement, ${tarefa.id})">✖ Cancelar</button>
+                    </div>
+                `;
+            }
+
+            async function iniciarEdicao(card, id) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}`);
+                    if (!res.ok) throw new Error();
+                    const tarefa = await res.json();
+                    renderizarCardEditavel(card, tarefa);
+                } catch (err) {
+                    mostrarMensagem("Erro ao carregar dados para edição.", true);
+                }
+            }
+
+            async function salvarEdicao(card, id) {
+                const novoTitulo = document.getElementById(`edit-titulo-${id}`).value.trim();
+                if (!novoTitulo) {
+                    mostrarMensagem("O título não pode ficar vazio.", true);
+                    return;
+                }
+                const novaDescricao = document.getElementById(`edit-descricao-${id}`).value.trim();
+                const novoStatus = document.getElementById(`edit-status-${id}`).value;
+
+                const tarefaAtualizada = {
+                    id: id,
+                    titulo: novoTitulo,
+                    descricao: novaDescricao,
+                    status: novoStatus
                 };
 
-                function mostrarMensagem(texto, isErro = false) {
-                    const msgDiv = document.getElementById("statusMsg");
-                    msgDiv.textContent = texto;
-                    msgDiv.style.background = isErro ? "rgba(220,53,69,0.7)" : "rgba(0,150,136,0.7)";
-                    msgDiv.classList.add("popup-bounce");
-                    setTimeout(() => msgDiv.classList.remove("popup-bounce"), 400);
-                    setTimeout(() => { if (msgDiv.textContent === texto) msgDiv.textContent = ""; }, 3000);
+                try {
+                    const res = await fetch(`${API_URL}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tarefaAtualizada)
+                    });
+                    if (!res.ok) throw new Error();
+                    await carregarTarefas();
+                    mostrarMensagem("Tarefa atualizada com sucesso!");
+                } catch (err) {
+                    mostrarMensagem("Erro ao salvar edição.", true);
+                    await carregarTarefas();
                 }
+            }
 
-                async function carregarTarefas() {
-                    mostrarMensagem("Carregando...");
-                    try {
-                        const res = await fetch(API_URL);
-                        if (!res.ok) throw new Error(`Erro ${res.status}`);
-                        const tarefas = await res.json();
-                        for (let col in colunasMap) colunasMap[col].innerHTML = '';
-                        tarefas.forEach(tarefa => adicionarCardNaColuna(tarefa));
-                        mostrarMensagem(`${tarefas.length} tarefa(s) carregada(s).`);
-                    } catch (err) {
-                        console.error(err);
-                        mostrarMensagem("Erro ao conectar com o servidor.", true);
-                    }
+            async function cancelarEdicao(card, id) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}`);
+                    if (!res.ok) throw new Error();
+                    const tarefa = await res.json();
+                    renderizarCardNormal(card, tarefa);
+                } catch (err) {
+                    mostrarMensagem("Erro ao cancelar edição.", true);
+                    await carregarTarefas();
                 }
+            }
 
-                function adicionarCardNaColuna(tarefa) {
-                    const container = colunasMap[tarefa.status];
-                    if (!container) return;
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.setAttribute('data-id', tarefa.id);
-                    card.innerHTML = `
-                        <h4>${escapeHtml(tarefa.titulo)}</h4>
-                        <p>${escapeHtml(tarefa.descricao || '')}</p>
-                        <select onchange="mudarStatus(${tarefa.id}, this.value)">
-                            <option value="A_FAZER" ${tarefa.status === 'A_FAZER' ? 'selected' : ''}>🌊 A Fazer</option>
-                            <option value="EM_ANDAMENTO" ${tarefa.status === 'EM_ANDAMENTO' ? 'selected' : ''}>🌀 Em Andamento</option>
-                            <option value="CONCLUIDO" ${tarefa.status === 'CONCLUIDO' ? 'selected' : ''}>✅ Concluído</option>
-                        </select>
-                        <div class="card-actions">
-                            <button class="edit-btn" onclick="editarTarefa(${tarefa.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="deletarTarefa(${tarefa.id})">🗑 Excluir</button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                    card.classList.add("popup-bounce");
-                    setTimeout(() => card.classList.remove("popup-bounce"), 300);
+            function escapeHtml(texto) {
+                if (!texto) return '';
+                const div = document.createElement('div');
+                div.textContent = texto;
+                return div.innerHTML;
+            }
+
+            async function criarTarefa() {
+                const titulo = document.getElementById('titulo').value.trim();
+                const descricao = document.getElementById('descricao').value.trim();
+                const status = document.getElementById('status').value;
+                if (!titulo) { alert("Título obrigatório!"); return; }
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ titulo, descricao, status })
+                    });
+                    if (!res.ok) throw new Error();
+                    document.getElementById('titulo').value = '';
+                    document.getElementById('descricao').value = '';
+                    document.getElementById('status').value = 'A_FAZER';
+                    await carregarTarefas();
+                    mostrarMensagem("Tarefa criada!");
+                } catch (err) {
+                    mostrarMensagem("Erro ao criar tarefa.", true);
                 }
+            }
 
-                function escapeHtml(texto) {
-                    if (!texto) return '';
-                    const div = document.createElement('div');
-                    div.textContent = texto;
-                    return div.innerHTML;
+            async function mudarStatus(id, novoStatus) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}`);
+                    const tarefa = await res.json();
+                    tarefa.status = novoStatus;
+                    const resPut = await fetch(`${API_URL}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tarefa)
+                    });
+                    if (!resPut.ok) throw new Error();
+                    await carregarTarefas();
+                    mostrarMensagem("Status atualizado!");
+                } catch (err) {
+                    mostrarMensagem("Erro ao mover tarefa.", true);
                 }
+            }
 
-                async function criarTarefa() {
-                    const titulo = document.getElementById('titulo').value.trim();
-                    const descricao = document.getElementById('descricao').value.trim();
-                    const status = document.getElementById('status').value;
-                    if (!titulo) { alert("Título obrigatório!"); return; }
-                    try {
-                        const res = await fetch(API_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ titulo, descricao, status })
-                        });
-                        if (!res.ok) throw new Error();
-                        document.getElementById('titulo').value = '';
-                        document.getElementById('descricao').value = '';
-                        document.getElementById('status').value = 'A_FAZER';
-                        await carregarTarefas();
-                        mostrarMensagem("Tarefa criada!");
-                    } catch (err) {
-                        mostrarMensagem("Erro ao criar tarefa.", true);
-                    }
+            async function deletarTarefa(id) {
+                if (!confirm("Excluir esta tarefa?")) return;
+                try {
+                    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    if (!res.ok) throw new Error();
+                    await carregarTarefas();
+                    mostrarMensagem("Tarefa excluída!");
+                } catch (err) {
+                    mostrarMensagem("Erro ao excluir.", true);
                 }
+            }
 
-                async function editarTarefa(id) {
-                    try {
-                        const res = await fetch(`${API_URL}/${id}`);
-                        if (!res.ok) throw new Error();
-                        const tarefa = await res.json();
-                        const novoTitulo = prompt("Editar título:", tarefa.titulo);
-                        if (novoTitulo === null) return;
-                        const novaDescricao = prompt("Editar descrição:", tarefa.descricao || "");
-                        if (novaDescricao === null) return;
-                        tarefa.titulo = novoTitulo.trim() || "Sem título";
-                        tarefa.descricao = novaDescricao.trim();
-                        const resPut = await fetch(`${API_URL}/${id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(tarefa)
-                        });
-                        if (!resPut.ok) throw new Error();
-                        await carregarTarefas();
-                        mostrarMensagem("Tarefa editada com sucesso!");
-                    } catch (err) {
-                        console.error(err);
-                        mostrarMensagem("Erro ao editar tarefa.", true);
-                    }
-                }
+            document.getElementById("addBtn").addEventListener("click", () => {
+                const btn = document.getElementById("addBtn");
+                btn.classList.add("popup-bounce");
+                setTimeout(() => btn.classList.remove("popup-bounce"), 300);
+                criarTarefa();
+            });
 
-                async function mudarStatus(id, novoStatus) {
-                    try {
-                        const res = await fetch(`${API_URL}/${id}`);
-                        const tarefa = await res.json();
-                        tarefa.status = novoStatus;
-                        const resPut = await fetch(`${API_URL}/${id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(tarefa)
-                        });
-                        if (!resPut.ok) throw new Error();
-                        await carregarTarefas();
-                        mostrarMensagem("Status atualizado!");
-                    } catch (err) {
-                        mostrarMensagem("Erro ao mover tarefa.", true);
-                    }
-                }
-
-                async function deletarTarefa(id) {
-                    if (!confirm("Excluir esta tarefa?")) return;
-                    try {
-                        const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                        if (!res.ok) throw new Error();
-                        await carregarTarefas();
-                        mostrarMensagem("Tarefa excluída!");
-                    } catch (err) {
-                        mostrarMensagem("Erro ao excluir.", true);
-                    }
-                }
-
-                document.getElementById("addBtn").addEventListener("click", () => {
-                    const btn = document.getElementById("addBtn");
-                    btn.classList.add("popup-bounce");
-                    setTimeout(() => btn.classList.remove("popup-bounce"), 300);
-                    criarTarefa();
-                });
-
-                window.onload = carregarTarefas;
-            </script>
-        </body>
+            window.onload = carregarTarefas;
+        </script>
+    </body>
 </html>
